@@ -1,0 +1,25 @@
+version: '3.4'
+services:
+  redis_database:
+    image: redis:6.0.5
+    container_name: redis_database
+    restart: always
+    sysctls:
+      net.core.somaxconn: "65535"
+    environment:
+      - REDIS_AUTH=${REDIS_AUTH:?err}
+      - REDIS_DB_NUM=${REDIS_DB_NUM:?err}
+    volumes:
+      - redis_database_data:/data
+    ports:
+      - "127.0.0.1:6379:6379"
+    networks:
+      - local
+    command: redis-server --appendonly yes  --requirepass "$REDIS_AUTH" --databases "$REDIS_DB_NUM"
+
+volumes:
+  redis_database_data:
+
+networks:
+  local:
+    driver: bridge
